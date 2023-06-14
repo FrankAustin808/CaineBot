@@ -1,0 +1,5 @@
+discord.py
+black
+humanfriendly
+pytz
+tortoise-orm[asyncpg]
