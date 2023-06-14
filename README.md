@@ -46,10 +46,9 @@ Updates pushed every monday! 🔄
 - Polls
 
 ## Releases / Status 🙃
-![last-commit](https://img.shields.io/github/last-commit/FrankIsDank/Caine) 
-![commit-activity](https://img.shields.io/github/commit-activity/m/FrankIsDank/Caine) 
-![commits-per-version](https://img.shields.io/github/commits-since/FrankIsDank/Caine/0.7.0-beta/master?include_prereleases) 
-![reop-stars](https://img.shields.io/github/stars/FrankIsDank/Caine?label=Caine%27s%20Stars&logoColor=gray)
+![last-commit](https://img.shields.io/github/last-commit/FrankAustin808/CaineBot) 
+![commit-activity](https://img.shields.io/github/commit-activity/m/FrankAustin808/CaineBot) 
+![reop-stars](https://img.shields.io/github/stars/FrankAustin808/CaineBot?label=Caine%27s%20Stars&logoColor=gray)
 
 ## Credits / Contributors 💙
 ### Credits
