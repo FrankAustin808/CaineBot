@@ -46,6 +46,11 @@ Updates pushed every monday! 🔄
 - Polls
 
 ## Releases / Status 🙃
+
+| Version | Status             |
+| ------- | ------------------ |
+|  0.6.8 ⚙️  | Online :white_check_mark: |
+
 ![last-commit](https://img.shields.io/github/last-commit/FrankAustin808/CaineBot) 
 ![commit-activity](https://img.shields.io/github/commit-activity/m/FrankAustin808/CaineBot) 
 ![reop-stars](https://img.shields.io/github/stars/FrankAustin808/CaineBot?label=Caine%27s%20Stars&logoColor=gray)
