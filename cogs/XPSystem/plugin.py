@@ -16,7 +16,7 @@ from discord.ext.commands import CheckFailure
 from discord.ext.commands import command, has_permissions
 
 
-class Leveling(Plugin):
+class exp(Plugin):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
@@ -68,6 +68,39 @@ class Leveling(Plugin):
             if (new_role := message.guild.get_role(653940328453373952)) not in message.author.roles:
                 await message.author.add_roles(new_role)
 
+    @app_commands.command(name='level', description="Shows selected targets current level")
+    async def display_user_level(self, interaction: Interaction, target: Optional[Member]):
+        target = target or interaction.user
+
+        xp, lvl = database.record(
+            "SELECT XP, Level FROM exp WHERE UserID = ?", target.id) or (None, None)
+
+        if lvl is not None:
+            await interaction.response.send_message(f"{target.display_name} is on level {lvl:,} with {xp:,} XP.", ephemeral=True)
+        else:
+            await self.bot.error(f"{target.display_name} is not tracked by the XP System.", interaction)
+
+    @app_commands.command(name='rank', description="Shows selected targets current rank")
+    async def display_level(self, interaction: Interaction, target: Optional[Member]):
+        target = target or interaction.user
+
+        ids = database.column("SELECT UserID FROM exp ORDER BY XP DESC")
+        try:
+            await interaction.response.send_message(f"{target.display_name} is rank {ids.index(target.id)+1} of {len(ids)}.", ephemeral=True)
+        except ValueError:
+            await self.bot.error(f"{target.display_name} is not tracked by the XP System.", interaction)
+
+    @Cog.listener()
+    async def on_ready(self):
+        if not self.bot._ready:
+            self.levelup_channel = self.bot.get_channel(759432499221889034)
+            self.bot.add_cog("exp")
+
+    @Cog.listener()
+    async def on_message(self, message: Message):
+        if not message.author.bot:
+            await self.process_xp(message)
+
 
 async def setup(bot: Bot) -> None:
-    await bot.add_cog(Leveling(bot))
+    await bot.add_cog(exp(bot))
