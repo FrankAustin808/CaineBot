@@ -12,7 +12,7 @@ from typing import Optional
 from .embed import Embed
 from discord.ext import commands, tasks
 from logging import getLogger
-import discord
+from discord import Member, Interaction
 from tortoise import Tortoise
 from config import *
 
@@ -49,7 +49,15 @@ class Bot(commands.AutoShardedBot):
             if not file.startswith("_"):
                 await self.load_extension(f"cogs.{file}.plugin")
 
+    async def on_member_join(member: Member, interaction: Interaction):
+        embed = discord.Embed(colour=0x1abc9c, description=f"Welcome **{member.name}** to **{interaction.guild.name}!**")
+        embed.set_thumbnail(url=f"{member.avatar.url}")
+        embed.set_author(name=member.name, icon_url=f"{member.avatar.url}")
+        embed.timestamp = datetime.datetime.utcnow()
 
+        channel = member.guild.get_channel(1100893943757021327)
+
+        await channel.send(embed=embed)
 
     async def on_ready(self) -> None:
         members = 0
