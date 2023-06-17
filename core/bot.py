@@ -7,7 +7,7 @@ import random
 import asyncio
 import datetime, time
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import Optional
 from .embed import Embed
 from discord.ext import commands, tasks
@@ -26,6 +26,9 @@ start_time = time.time()
 
 client = discord.Client
 
+def restart_caine():
+    os.execv(sys.executable, ['pythob'] + sys.argv)
+
 class Bot(commands.AutoShardedBot):
     def __init__(self):
         super().__init__(
@@ -37,7 +40,6 @@ class Bot(commands.AutoShardedBot):
 
 
     async def setup_hook(self) -> None:
-
         await Tortoise.init(
             db_url=f"postgres://{config.USER}:{config.PASSWORD}@{config.HOST}:{config.PORT}/{config.DB_NAME}",
             modules= {
@@ -49,6 +51,7 @@ class Bot(commands.AutoShardedBot):
             if not file.startswith("_"):
                 await self.load_extension(f"cogs.{file}.plugin")
 
+
     async def on_member_join(member: Member, interaction: Interaction):
         embed = discord.Embed(colour=0x1abc9c, description=f"Welcome **{member.name}** to **{interaction.guild.name}!**")
         embed.set_thumbnail(url=f"{member.avatar.url}")
@@ -59,6 +62,7 @@ class Bot(commands.AutoShardedBot):
 
         await channel.send(embed=embed)
 
+
     async def on_ready(self) -> None:
         members = 0
         for guild in self.guilds:
@@ -68,12 +72,15 @@ class Bot(commands.AutoShardedBot):
         log.info(f"Logged in as {self.user}")
         self.tree.sync
         print(f"Caine Is Supporting {len(self.guilds)} Servers | Protecting {members} People | {VERSION} |")
-    
+
+
     async def on_connect(self) -> None:
         if '-sync' in sys.argv:
             synced_commands = await self.tree.sync()
             log.info(f"Successfully synced {len(synced_commands)} commands! 🙃")
-
+        
+        if datetime.now().hour == 23 and datetime.now().minute == 59:
+            restart_caine()
 
     async def success(
             self,
@@ -105,7 +112,8 @@ class Bot(commands.AutoShardedBot):
                 if interaction.response.is_done():
                     return await interaction.followup.send(content=f"✔️ | {message}", ephemeral=ephemeral)
                 return await interaction.response.send_message(content=f"✔️ | {message}", ephemeral=ephemeral)
-            
+
+
     async def error(
             self,
             message: str,
