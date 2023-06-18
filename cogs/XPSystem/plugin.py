@@ -3,7 +3,7 @@ from core import Bot, Embed, AfkModel
 from .. import Plugin
 from db import database
 from typing import Optional
-from discord import Member, Message, User, Embed, Interaction, app_commands
+from discord import Member, Message, User, Embed, Interaction, app_commands, SelectMenu
 from discord.ext import commands
 from discord.ui import View, Select
 from config import VERSION
@@ -14,6 +14,37 @@ from datetime import datetime, timedelta
 from discord.ext.commands import Cog
 from discord.ext.commands import CheckFailure
 from discord.ext.commands import command, has_permissions
+from discord.ext.menus import MenuPages, ListPageSource
+
+
+class HelpMenu(ListPageSource):
+    def __init__(self, interaction: Interaction, data):
+        super().__init__(data, per_page=10)
+
+    async def write_page(self, interaction: Interaction, menu: MenuPages, offset, fields=[]):
+        len_data = len(self.entries)
+
+        embed = Embed(title="XP Leaderboard",
+                      color=interaction.user.accent_color)
+        embed.set_thumbnail(url=interaction.guild.icon.url)
+        embed.set_footer(
+            text=f"{offset:,} - {min(len_data, offset+self.per_page-1):,} members.")
+
+        for name, value in fields:
+            embed.add_field(name=name, value=value, inline=False)
+
+        return embed
+
+    async def format_page(self, interaction: Interaction, menu: MenuPages, entries):
+        offset = (menu.current_page*self.per_page) + 1
+
+        fields = []
+        table = ("\n".join(f"{idx+offset}. {interaction.guild.get_member(entry[0]).display_name} (XP: {entry[1]} | level: {entry[2]})"
+                           for idx, entry in enumerate(entries)))
+
+        fields.append(("Ranks", table))
+
+        return await self.write_page(menu, offset, fields)
 
 
 class exp(Plugin):
@@ -81,7 +112,7 @@ class exp(Plugin):
             await self.bot.error(f"{target.display_name} is not tracked by the XP System.", interaction)
 
     @app_commands.command(name='rank', description="Shows selected targets current rank")
-    async def display_level(self, interaction: Interaction, target: Optional[Member]):
+    async def display_rank(self, interaction: Interaction, target: Optional[Member]):
         target = target or interaction.user
 
         ids = database.column("SELECT UserID FROM exp ORDER BY XP DESC")
