@@ -153,6 +153,7 @@ class Utility(Plugin):
         voice_channels = len(guild.voice_channels)
         text_channels = len(guild.text_channels)
         roles = [role for role in guild.roles]
+        sevrer_categories = len(interaction.guild.categories)
 
         emoji_string = ""
         for e in guild.emojis:
@@ -180,22 +181,30 @@ class Utility(Plugin):
             value=guild.owner.mention
         )
         embed.add_field(
+            name="Server Created At:",
+            value=guild.created_at.strftime("%m/%d/%Y")
+        )
+        embed.add_field(
             name="Custom Emojies",
             value=emoji_string or "No custom emojies detected",
             inline=False
         )
         embed.add_field(
+            name="AFK Channel",
+            value=guild.afk_channel or "None",
+            inline=False
+        )
+        embed.add_field(
             name="Voice Channels",
-            value=voice_channels
+            value=voice_channels or "None"
         )
         embed.add_field(
             name="Text Channels",
-            value=text_channels
+            value=text_channels or "None"
         )
         embed.add_field(
-            name="AFK Channel",
-            value=guild.afk_channel,
-            inline=False
+            name="Categories",
+            value=sevrer_categories or "None"
         )
         embed.add_field(
             name="Member Count",
@@ -209,10 +218,11 @@ class Utility(Plugin):
         )
         embed.add_field(
             name="Server Boosts",
-            value=guild.premium_subscription_count
+            value=guild.premium_subscription_count,
+            inline=False
         )
         embed.set_footer(
-            text=datetime.now()
+            text=datetime.utcnow()
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
